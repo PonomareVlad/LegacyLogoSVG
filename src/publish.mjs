@@ -26,10 +26,14 @@ for (let [name, files = []] of Object.entries(groups)) {
         await bot.createNewStickerSet({name, title, stickers});
         let file;
         while (file = files.shift()) {
-            const path = tgs + file;
-            const {file_id: sticker} = await bot.uploadStickerFile({path});
-            await bot.addStickerToSet({name, sticker: {sticker, emoji_list}});
-            console.log(path, sticker);
+            try {
+                const path = tgs + file;
+                const {file_id: sticker} = await bot.uploadStickerFile({path});
+                await bot.addStickerToSet({name, sticker: {sticker, emoji_list}});
+                console.log(path, sticker);
+            } catch (e) {
+                console.error(e);
+            }
         }
         const message = `https://t.me/addemoji/${LogoSVGBot.getSetName(name, bot.username)}`;
         await bot.sendMessage(user_id, message);
