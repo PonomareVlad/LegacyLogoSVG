@@ -16,8 +16,8 @@ export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 for (let [name, files = []] of Object.entries(groups)) {
     try {
-        name = name + suffix;
         const title = capitalize(name + branding);
+        name = name + suffix;
         console.debug(name, title, files.length);
         await bot.deleteStickerSet({name}).catch(e => e);
         const path = tgs + files.shift();
