@@ -29,6 +29,7 @@ for (let [name, files = []] of Object.entries(groups)) {
             const path = tgs + file;
             const {file_id: sticker} = await bot.uploadStickerFile({path});
             await bot.addStickerToSet({name, sticker: {sticker, emoji_list}});
+            console.log(path, sticker);
         }
         const message = `https://t.me/addemoji/${LogoSVGBot.getSetName(name, bot.username)}`;
         await bot.sendMessage(user_id, message);
@@ -37,3 +38,5 @@ for (let [name, files = []] of Object.entries(groups)) {
         console.error(e);
     }
 }
+
+process.exit();
