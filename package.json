@@ -4,13 +4,24 @@
   "funding": "https://PonomareVlad.ru/donate",
   "license": "MIT",
   "scripts": {
-    "dev": "vc dev",
-    "dev-with-tunnel": "npm run tunnel & npm run dev",
-    "tunnel": "cloudflared tunnel --url http://localhost:3000"
+    "bot": "vc dev",
+    "env": "vercel env pull .env",
+    "group": "node src/group.mjs",
+    "install": ".scripts/install.sh",
+    "convert": ".scripts/convert.sh",
+    "publish": "node src/publish.mjs",
+    "optimize": "node src/optimize.mjs",
+    "publish-with-env": "node -r dotenv/config src/publish.mjs",
+    "build": "npm run install && npm run group && npm run optimize && npm run convert && npm run publish"
   },
   "dependencies": {
+    "jsdom": "^21.1.1",
+    "svgo": "^3.0.2",
     "telebot": "^1.4.1",
     "telebot-vercel": "^1.0.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3"
   },
   "engines": {
     "node": "^18.0.0"

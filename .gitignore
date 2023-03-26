@@ -1,4 +1,4 @@
-.vercel
-
-# Project exclude paths
 /node_modules/
+/groups.json
+.vercel
+.env

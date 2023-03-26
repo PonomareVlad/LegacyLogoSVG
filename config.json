@@ -1,0 +1,75 @@
+{
+  "url": "https://svgporn.com",
+  "selector": "#__NEXT_DATA__",
+  "excluded": [
+    "developers"
+  ],
+  "segments": [
+    "cli",
+    "php",
+    "IDE",
+    "css",
+    "cms",
+    "java",
+    "ruby",
+    "react",
+    "python",
+    "mobile",
+    "node.js",
+    "graphql",
+    "library",
+    "database",
+    "language",
+    "jetbrains",
+    "reference",
+    "javascript",
+    "web hosting",
+    "code editor",
+    "code review",
+    "cross-platform",
+    "version control",
+    "static site generator",
+    "continuous integration"
+  ],
+  "joins": {
+    "geeks": [
+      "hackers"
+    ],
+    "IDE": [
+      "cli",
+      "jetbrains",
+      "code editor",
+      "code review",
+      "version control",
+      "continuous integration"
+    ],
+    "services": [
+      "web hosting",
+      "publishers",
+      "reference",
+      "bloggers",
+      "sharing",
+      "teams"
+    ],
+    "backend": [
+      "cms",
+      "php",
+      "java",
+      "ruby",
+      "python",
+      "node.js",
+      "graphql",
+      "database",
+      "language"
+    ],
+    "frontend": [
+      "css",
+      "react",
+      "mobile",
+      "library",
+      "javascript",
+      "cross-platform",
+      "static site generator"
+    ]
+  }
+}
