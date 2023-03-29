@@ -19,14 +19,15 @@ await bot.init();
 
 const error = async (error, ...args) => {
     const json = JSON.stringify(serializeError(error), null, 2);
-    const context = args.length ? ["⚠️", ...args, "—"].join(" ") : "⚠️";
-    const message = md`${context} ${md.codeBlock(json, "json")}!`;
+    const context = args.length ? ["⚠️", ...args].join(" ") : "⚠️";
+    const message = md`${context}\r\n${md.codeBlock(json, "json")}`;
     await bot.sendMessage(user_id, md.build(message), {parseMode: "MarkdownV2"});
     console.error(error);
 }
 
 const setInfo = async (title, logos = []) => {
-    const message = ["🗂", title, "—", logos.length].join(" ");
+    const count = logos.flatMap(({stickers = []}) => stickers);
+    const message = ["🗂", title, "—", count].join(" ");
     await bot.sendMessage(user_id, message);
     console.log(message);
 }
@@ -110,7 +111,7 @@ for (let [key, logos = []] of Object.entries(sets)) {
                         await addSticker(data);
 
                     } catch (e) {
-                        await error(e, "File", file);
+                        await error(e, "File:", file);
                     }
                 }
 
