@@ -74,14 +74,18 @@ const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList
 
 for (let [key, logos = []] of Object.entries(sets)) {
     try {
+
         const id = Utils.capitalize(key);
         const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
         const title = [id, TELEGRAM_SET_APPENDIX].filter(Boolean).join(" ");
         await setInfo(title, logos);
         await deleteSet(name);
+
         let set;
+
         for (let logo of logos) {
             try {
+
                 const {
                     shortname,
                     name: logoName,
@@ -89,25 +93,36 @@ for (let [key, logos = []] of Object.entries(sets)) {
                     stickers = [],
                     categories = [],
                 } = logo || {};
-                const keywords = [logoName, ...tags, ...categories, shortname].reduce((items, item) => {
-                    return (items.join("").length + item.length) <= 64 ? [...items, item] : items;
-                }, []);
+
+                const keywords = [
+                    logoName,
+                    ...tags,
+                    ...categories,
+                    shortname,
+                ].reduce(Utils.reduceKeywords, []);
+
                 for (let file of stickers) {
                     try {
+
                         const sticker = await uploadSticker(file);
                         const data = {name, title, sticker, keywords};
                         if (!set) set = await createSet(data);
                         await addSticker(data);
+
                     } catch (e) {
                         await error(e, "File", file);
                     }
                 }
+
             } catch (e) {
                 await error(e, "Logo:", logo.shortname);
             }
         }
+
         await sendLink(name);
+
     } catch (e) {
         await error(e, "Set:", key);
     }
+
 }

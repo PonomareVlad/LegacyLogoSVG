@@ -22,5 +22,5 @@ for (const file of await readdir(logos)) {
     const source = await readFile(logos + file, {encoding: "utf8"});
     const {data} = optimize(source, options);
     await writeFile(svg + file, data);
-    console.debug(svg + file);
+    // console.debug(svg + file);
 }

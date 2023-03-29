@@ -48,6 +48,10 @@ export const mergeGroup = (child, parent, groups = new Map()) => {
     groups.delete(child);
 }
 
+export const reduceKeywords = (items, item) => {
+    return (items.join("").length + item.length) <= 64 ? [...items, item] : items;
+}
+
 export const getGroup = (key, groups = new Map()) => {
     if (groups.has(key)) return groups.get(key);
     const group = new Set();
@@ -58,6 +62,7 @@ export const getGroup = (key, groups = new Map()) => {
 export default {
     countByGroupSorter,
     countByGroupMapper,
+    reduceKeywords,
     variantsFilter,
     prioritySorter,
     addByPriority,
