@@ -27,8 +27,8 @@ const error = async (error, ...args) => {
 }
 
 const setInfo = async (title, logos = []) => {
-    const count = logos.flatMap(({stickers = []}) => stickers);
-    const message = ["🗂", title, "—", count].join(" ");
+    const stickers = logos.flatMap(({stickers = []}) => stickers);
+    const message = ["🗂", title, "—", stickers.length].join(" ");
     await bot.sendMessage(chat_id, message);
     console.log(message);
 }

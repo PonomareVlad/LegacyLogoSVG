@@ -63,7 +63,7 @@ Object.entries(categories).forEach(([parent, children]) => {
 groups.forEach((group, key) => !group.size ? groups.delete(key) : null);
 
 const countByGroup = new Map(Utils.getUniqItems(groups.entries()).map(Utils.countByGroupMapper).sort(Utils.countByGroupSorter));
-const countTotal = Utils.getUniqItems(countByGroup.values()).reduce((sum, count) => sum + count, 0);
+const countTotal = [...countByGroup.values()].reduce((sum, count) => sum + count, 0);
 const countLogos = originalLogos.length;
 
 [

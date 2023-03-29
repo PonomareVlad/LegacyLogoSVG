@@ -26,7 +26,6 @@ export const getJoined = items => Object.values(items).flat();
 export const countByGroupSorter = ([, a] = [], [, b] = []) => b - a;
 export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 export const prioritySorter = (a, b) => priority.indexOf(a) - priority.indexOf(b);
-export const countByGroupMapper = ([name, items = new Set()]) => [name, items.size];
 export const variantsFilter = file => variants.some(variant => file.endsWith(variant));
 export const logosSorter = ({shortname: a} = {}, {shortname: b} = {}) => a.localeCompare(b);
 export const joinMapper = ([parent, children = []]) => children.map(child => [child, parent]);
@@ -40,6 +39,10 @@ export const addByPriority = (logo = {}, groups = new Map(), targetItems = [], t
     const targetItem = targetItems.shift();
     const targetJoin = targetJoins[targetItem] || targetItem;
     return getGroup(targetJoin, groups).add(logo);
+}
+
+export const countByGroupMapper = ([name, items = new Set()]) => {
+    return [name, getUniqItems(items.values()).flatMap(({stickers = []}) => stickers).length];
 }
 
 export const mergeGroup = (child, parent, groups = new Map()) => {
