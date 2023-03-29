@@ -8,15 +8,16 @@ const {
 await bot.init();
 
 const tgs = "./tgs/";
-const suffix = "_beta";
+const suffix = "_test";
 const emoji_list = ["🖼️"];
-const branding = " @LogoSVG (beta)";
+const branding = " @LogoSVG (test)";
 const user_id = parseInt(TELEGRAM_USER_ID);
 export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 for (let [name, files = []] of Object.entries(groups)) {
     try {
-        const title = capitalize(name + branding);
+        name = capitalize(name);
+        const title = name + branding;
         name = name + suffix;
         console.debug(name, title, files.length);
         await bot.deleteStickerSet({name}).catch(e => e);
