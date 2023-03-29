@@ -377,5 +377,19 @@
     "ide": "IDE",
     "aws": "AWS",
     "jetbrains": "JetBrains"
-  }
+  },
+  "variants": [
+    "-icon-round.svg",
+    "-ignition.svg",
+    "-turbofan.svg",
+    "-vertical.svg",
+    "-icon-alt.svg",
+    "-octocat.svg",
+    "-freddie.svg",
+    "-tomster.svg",
+    "-classic.svg",
+    "-pirate.svg",
+    "-color.svg",
+    "-icon.svg"
+  ]
 }
