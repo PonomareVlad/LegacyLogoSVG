@@ -9,10 +9,11 @@ const {
     TELEGRAM_SET_SUFFIX,
     TELEGRAM_SET_APPENDIX,
     TELEGRAM_STICKER_EMOJI = "🖼️",
+    TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
 } = process.env;
 
 const tgs = "./tgs/";
-const user_id = parseInt(TELEGRAM_USER_ID);
+const chat_id = parseInt(TELEGRAM_CHAT_ID);
 const emojiList = [TELEGRAM_STICKER_EMOJI];
 
 await bot.init();
@@ -21,28 +22,28 @@ const error = async (error, ...args) => {
     const json = JSON.stringify(serializeError(error), null, 2);
     const context = args.length ? ["⚠️", ...args].join(" ") : "⚠️";
     const message = md`${context}\r\n${md.codeBlock(json, "json")}`;
-    await bot.sendMessage(user_id, md.build(message), {parseMode: "MarkdownV2"});
+    await bot.sendMessage(chat_id, md.build(message), {parseMode: "MarkdownV2"});
     console.error(error);
 }
 
 const setInfo = async (title, logos = []) => {
     const count = logos.flatMap(({stickers = []}) => stickers);
     const message = ["🗂", title, "—", count].join(" ");
-    await bot.sendMessage(user_id, message);
+    await bot.sendMessage(chat_id, message);
     console.log(message);
 }
 
 const sendLink = async name => {
     const setName = LogoSVGBot.getSetName(name, bot.username);
     const message = ["✨", `t.me/addemoji/${setName}`].join(" ");
-    await bot.sendMessage(user_id, message);
+    await bot.sendMessage(chat_id, message);
     console.log(message);
 }
 
 const deleteSet = async name => {
     const status = await bot.deleteStickerSet({name}).catch(e => e);
     const message = ["🗑️", name, "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(user_id, message);
+    // await bot.sendMessage(chat_id, message);
     console.log(message);
     return status;
 }
@@ -51,7 +52,7 @@ const uploadSticker = async file => {
     const path = tgs + file;
     const {file_id} = await bot.uploadStickerFile({path});
     const message = ["💾", path, "—", !!file_id].join(" ");
-    // await bot.sendMessage(user_id, message);
+    // await bot.sendMessage(chat_id, message);
     console.log(message);
     return file_id;
 }
@@ -59,7 +60,7 @@ const uploadSticker = async file => {
 const addSticker = async ({name, sticker, keywords, emoji_list = emojiList} = {}) => {
     const status = await bot.addStickerToSet({name, sticker: {sticker, emoji_list, keywords}});
     const message = ["🖼", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(user_id, message);
+    // await bot.sendMessage(chat_id, message);
     console.log(message);
     return status;
 }
@@ -68,7 +69,7 @@ const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList
     const stickers = [{sticker, emoji_list, keywords}];
     const status = await bot.createNewStickerSet({name, title, stickers});
     const message = ["🎨", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(user_id, message);
+    // await bot.sendMessage(chat_id, message);
     console.log(message);
     return status;
 }
@@ -82,7 +83,7 @@ const links = Object.keys(sets).map(key => {
 
 const message = ["📦 Uploading sets:", ...links].join("\r\n");
 
-await bot.sendMessage(user_id, message);
+await bot.sendMessage(chat_id, message);
 
 for (let [key, logos = []] of Object.entries(sets)) {
     try {
