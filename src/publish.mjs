@@ -1,4 +1,5 @@
 import sets from "../sets.json" assert {type: "json"};
+import {serializeError} from "serialize-error";
 import bot, {LogoSVGBot} from "./bot.mjs";
 import Utils from "./utils.mjs";
 
@@ -16,7 +17,7 @@ const emojiList = [TELEGRAM_STICKER_EMOJI];
 await bot.init();
 
 const error = async error => {
-    const message = ["⚠️", error.message].join(" ");
+    const message = ["⚠️", JSON.stringify(serializeError(error))].join(" ");
     await bot.sendMessage(user_id, message);
     console.error(error);
 }
@@ -85,7 +86,9 @@ for (let [key, logos = []] of Object.entries(sets)) {
                     stickers = [],
                     categories = [],
                 } = logo || {};
-                const keywords = [logoName, shortname, ...categories, ...tags];
+                const keywords = [logoName, ...tags, ...categories, shortname].reduce((items, item) => {
+                    return (items.join("").length + item.length) <= 64 ? [...items, item] : items;
+                }, []);
                 for (let file of stickers) {
                     try {
                         const sticker = await uploadSticker(file);

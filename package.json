@@ -18,7 +18,8 @@
     "jsdom": "^21.1.1",
     "svgo": "^3.0.2",
     "telebot": "^1.4.1",
-    "telebot-vercel": "^1.0.1"
+    "telebot-vercel": "^1.0.1",
+    "serialize-error": "^11.0.0"
   },
   "devDependencies": {
     "dotenv": "^16.0.3"
