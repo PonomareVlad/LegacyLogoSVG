@@ -7,6 +7,7 @@ const {
     selector,
     tags = {},
     logos = {},
+    title = {},
     excluded = [],
     priority = [],
     categories = {},
@@ -55,9 +56,31 @@ logosArray.map(logo => {
     const {
         shortname,
         tags = [],
+        files = [],
         categories = [],
     } = logo || {};
-    if (joinedLogos.includes(shortname)) return getGroup(logosJoin[shortname]).add(logo);
+    let targetFiles = files.map(file => file.replace('.svg', '.tgs'));
+    if (targetFiles.length > 1) {
+        targetFiles = targetFiles.filter(file =>
+            file.endsWith('-icon-round.tgs') ||
+            file.endsWith('-ignition.tgs') ||
+            file.endsWith('-turbofan.tgs') ||
+            file.endsWith('-vertical.tgs') ||
+            file.endsWith('-icon-alt.tgs') ||
+            file.endsWith('-octocat.tgs') ||
+            file.endsWith('-freddie.tgs') ||
+            file.endsWith('-tomster.tgs') ||
+            file.endsWith('-classic.tgs') ||
+            file.endsWith('-pirate.tgs') ||
+            file.endsWith('-color.tgs') ||
+            file.endsWith('-icon.tgs')
+        );
+    }
+    if (joinedLogos.includes(shortname)) {
+        // getGroup(logosJoin[shortname]).add(logo);
+        const group = getGroup(logosJoin[shortname]);
+        return targetFiles.forEach(file => group.add(file));
+    }
     const filteredCategories = categories.filter(category => !excluded.includes(category));
     if (filteredCategories.length) {
         const targetCategories = [...new Set(filteredCategories.map(category => {
@@ -67,18 +90,25 @@ logosArray.map(logo => {
         const hasPriority = targetCategories.filter(category => priority.includes(category));
         if (hasPriority.length) {
             const targetCategory = hasPriority.sort(prioritySorter).shift();
-            return getGroup(targetCategory).add(logo);
+            const group = getGroup(targetCategory);
+            return targetFiles.forEach(file => group.add(file));
         }
-        return getGroup(targetCategories.shift()).add(logo);
+        const group = getGroup(targetCategories.shift());
+        return targetFiles.forEach(file => group.add(file));
     }
     const targetTags = tags.filter(tag => joinedTags.includes(tag));
-    if (!targetTags.length) return getGroup(collects).add(logo);
+    if (!targetTags.length) {
+        const group = getGroup(collects)
+        return targetFiles.forEach(file => group.add(file));
+    }
     const hasPriority = targetTags.filter(tag => priority.includes(tag));
     if (hasPriority.length) {
         const targetTag = hasPriority.sort(prioritySorter).shift();
-        return getGroup(targetTag).add(logo);
+        const group = getGroup(targetTag);
+        return targetFiles.forEach(file => group.add(file));
     }
-    return getGroup(tagsJoin[targetTags.shift()]).add(logo);
+    const group = getGroup(tagsJoin[targetTags.shift()]);
+    return targetFiles.forEach(file => group.add(file));
 });
 
 Object.entries(categories).forEach(([parent, children]) => children.forEach(child => mergeGroup(child, parent)));
@@ -98,6 +128,8 @@ const countLogos = logosArray.length;
     ["Total:", countTotal],
 ].forEach(args => console.log(...args));
 
-const sets = Object.fromEntries([...groups.entries()].map(([name, items]) => [name, [...items.values()]]));
+const sets = Object.fromEntries([...groups.entries()].map(([name, items]) => {
+    return [title[name] || name, [...items.values()]];
+}));
 
 writeFileSync('./groups.json', JSON.stringify(sets, null, 2));

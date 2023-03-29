@@ -372,5 +372,10 @@
     "react",
     "web",
     "developers"
-  ]
+  ],
+  "title": {
+    "ide": "IDE",
+    "aws": "AWS",
+    "jetbrains": "JetBrains"
+  }
 }
