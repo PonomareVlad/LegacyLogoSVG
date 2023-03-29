@@ -34,7 +34,7 @@ const setInfo = async (title, logos = []) => {
 
 const sendLink = async name => {
     const setName = LogoSVGBot.getSetName(name, bot.username);
-    const message = ["✨", `https://t.me/addemoji/${setName}`].join(" ");
+    const message = ["✨", `t.me/addemoji/${setName}`].join(" ");
     await bot.sendMessage(user_id, message);
     console.log(message);
 }
@@ -72,6 +72,17 @@ const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList
     console.log(message);
     return status;
 }
+
+const links = Object.keys(sets).map(key => {
+    const id = Utils.capitalize(key);
+    const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
+    const setName = LogoSVGBot.getSetName(name, bot.username);
+    return `t.me/addemoji/${setName}`;
+});
+
+const message = ["📦 Uploading sets:", ...links].join("\r\n");
+
+await bot.sendMessage(user_id, message);
 
 for (let [key, logos = []] of Object.entries(sets)) {
     try {
