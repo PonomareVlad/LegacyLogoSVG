@@ -1,5 +1,7 @@
 /node_modules/
 /groups.json
 /sets.json
-.vercel
-.env
+/.vercel
+/.env
+/tgs/
+/svg/
