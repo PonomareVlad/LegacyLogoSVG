@@ -24,6 +24,7 @@ export async function fetchLogos(targetUrl = url, targetSelector = selector) {
 export const getUniqItems = items => [...new Set(items)];
 export const getJoined = items => Object.values(items).flat();
 export const countByGroupSorter = ([, a] = [], [, b] = []) => b - a;
+export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 export const prioritySorter = (a, b) => priority.indexOf(a) - priority.indexOf(b);
 export const countByGroupMapper = ([name, items = new Set()]) => [name, items.size];
 export const variantsFilter = file => variants.some(variant => file.endsWith(variant));
@@ -62,6 +63,7 @@ export default {
     addByPriority,
     getUniqItems,
     logosSorter,
+    capitalize,
     mergeGroup,
     fetchLogos,
     getJoined,
