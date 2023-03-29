@@ -21,7 +21,7 @@ const error = async (error, ...args) => {
     const json = JSON.stringify(serializeError(error), null, 2);
     const context = args.length ? ["⚠️", ...args, "—"].join(" ") : "⚠️";
     const message = md`${context} ${md.codeBlock(json, "json")}!`;
-    await bot.sendMessage(user_id, message, {parseMode: "MarkdownV2"});
+    await bot.sendMessage(user_id, md.build(message), {parseMode: "MarkdownV2"});
     console.error(error);
 }
 
