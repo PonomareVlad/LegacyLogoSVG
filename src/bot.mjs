@@ -14,7 +14,7 @@ export class LogoSVGBot extends TeleBot {
         this.on("text", msg => msg.reply.text(msg.text));
     }
 
-    static getSetName = (name, username) => `${name.replaceAll(" ", "_")}_by_${username}`;
+    static getSetName = (name = "", username = "") => `${name.replaceAll(" ", "_")}_by_${username}`;
 
     async init() {
         const {username} = await this.getMe();
