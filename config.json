@@ -520,10 +520,5 @@
     "jetbrains",
     "copyleft"
   ],
-  "skipped": [
-    "composer",
-    "waffle",
-    "lerna",
-    "hugo"
-  ]
+  "skipped": []
 }

@@ -15,9 +15,13 @@ const {
 const {
     GITHUB_TOKEN,
     TELEGRAM_USER_ID,
+    SKIP_FILES_CHECK,
+    SKIP_FILES_UPDATE,
     TELEGRAM_SET_SUFFIX,
+    DELETE_EXISTING_SETS,
     VERCEL_GIT_REPO_SLUG,
     VERCEL_GIT_REPO_OWNER,
+    SKIP_STICKER_ORDERING,
     TELEGRAM_SET_APPENDIX,
     TELEGRAM_STICKER_EMOJI = "🖼️",
     TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
@@ -31,6 +35,7 @@ export const getUniqItems = items => [...new Set(items)];
 export const getJoined = items => Object.values(items).flat();
 export const countByGroupSorter = ([, a] = [], [, b] = []) => b - a;
 export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+export const checkFile = (file, files = {}) => !SKIP_FILES_CHECK && file in files;
 export const prioritySorter = (a, b) => priority.indexOf(a) - priority.indexOf(b);
 export const getSetName = id => [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
 export const getSetTitle = id => [id, TELEGRAM_SET_APPENDIX].filter(Boolean).join(" ");
@@ -92,6 +97,7 @@ export const addSticker = async ({name, sticker, keywords, emoji_list = emojiLis
 }
 
 export const setStickerPosition = async (sticker, position = 0) => {
+    if (SKIP_STICKER_ORDERING) return;
     const status = await bot.setStickerPositionInSet({sticker, position});
     const message = ["📌", position, "—", JSON.stringify(status, null, 2)].join(" ");
     // await bot.sendMessage(chat_id, message);
@@ -109,6 +115,7 @@ export const createSet = async ({name, title, sticker, keywords, emoji_list = em
 }
 
 export const deleteSet = async name => {
+    if (!DELETE_EXISTING_SETS) return;
     const status = await bot.deleteStickerSet({name}).catch(e => e);
     const message = ["🗑️", name, "—", JSON.stringify(status, null, 2)].join(" ");
     // await bot.sendMessage(chat_id, message);
@@ -174,15 +181,15 @@ export const getSet = async name => {
 }
 
 export const updateFiles = async files => {
+    if (SKIP_FILES_UPDATE) return;
     const path = "files.json";
     const octokit = new Octokit({auth: GITHUB_TOKEN});
     const options = {
         path,
-        branch: "beta",
         repo: VERCEL_GIT_REPO_SLUG,
         owner: VERCEL_GIT_REPO_OWNER,
     }
-    const {sha} = await octokit.rest.repos.getContent(options);
+    const {sha} = await octokit.rest.repos.getContent(options).catch(() => ({}));
     const content = Buffer.from(JSON.stringify(files, null, 2), "utf8").toString("base64");
     const updateOptions = {...options, sha, content, message: path};
     const {status} = await octokit.rest.repos.createOrUpdateFileContents(updateOptions);
@@ -214,6 +221,7 @@ export default {
     getJoined,
     createSet,
     deleteSet,
+    checkFile,
     getGroup,
     getJoins,
     getLinks,

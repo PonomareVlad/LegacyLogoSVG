@@ -39,7 +39,7 @@ for (let [key, logos = []] of Object.entries(sets)) {
                 for (let file of stickers) {
                     try {
 
-                        if (!(file in files)) {
+                        if (!Utils.checkFile(file, files)) {
                             const sticker = await Utils.uploadSticker(file);
                             const data = {name, title, sticker, keywords};
                             if (!set) await Utils.createSet(data);
