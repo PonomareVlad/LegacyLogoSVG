@@ -164,7 +164,7 @@ export const getLinks = sets => {
 
 export const sendLinks = async sets => {
     const links = getLinks(sets);
-    const message = ["📦 Uploading sets:", ...links.join("\r\n\r\n")].join("\r\n");
+    const message = ["📦 Uploading sets:", links.join("\r\n\r\n")].join("\r\n");
     return bot.sendMessage(chat_id, message);
 }
 

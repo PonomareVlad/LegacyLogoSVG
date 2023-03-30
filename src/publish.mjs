@@ -39,17 +39,16 @@ for (let [key, logos = []] of Object.entries(sets)) {
                 for (let file of stickers) {
                     try {
 
-                        const sticker = files[file] ??= await Utils.uploadSticker(file);
-                        const data = {name, title, sticker, keywords};
-
-                        if (!set) {
-                            await Utils.createSet(data);
+                        if (!(file in files)) {
+                            const sticker = await Utils.uploadSticker(file);
+                            const data = {name, title, sticker, keywords};
+                            if (!set) await Utils.createSet(data);
+                            await Utils.addSticker(data);
                             set = await Utils.getSet(name);
+                            files[file] = set.at(-1);
                         }
 
-                        if (!set.includes(sticker)) await Utils.addSticker(data);
-
-                        await Utils.setStickerPosition(sticker, position++);
+                        await Utils.setStickerPosition(files[file], position++);
 
                     } catch (e) {
                         await Utils.error(e, "File:", file);
