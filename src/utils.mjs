@@ -22,6 +22,7 @@ const {
     VERCEL_GIT_REPO_SLUG,
     VERCEL_GIT_REPO_OWNER,
     SKIP_STICKER_ORDERING,
+    SETS_NEEDS_REPAINTING,
     TELEGRAM_SET_APPENDIX,
     TELEGRAM_STICKER_EMOJI = "🖼️",
     TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
@@ -106,8 +107,9 @@ export const setStickerPosition = async (sticker, position = 0) => {
 }
 
 export const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList} = {}) => {
+    const needs_repainting = !!SETS_NEEDS_REPAINTING;
     const stickers = [{sticker, emoji_list, keywords}];
-    const status = await bot.createNewStickerSet({name, title, stickers});
+    const status = await bot.createNewStickerSet({name, title, stickers, needs_repainting});
     const message = ["🎨", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
     // await bot.sendMessage(chat_id, message);
     console.log(message);
