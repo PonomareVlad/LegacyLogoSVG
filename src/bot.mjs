@@ -4,7 +4,8 @@ import fs from "fs";
 
 const {
     TELEGRAM_USER_ID,
-    TELEGRAM_BOT_TOKEN
+    TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
 } = process.env;
 
 export class LogoSVGBot extends TeleBot {
@@ -27,6 +28,11 @@ export class LogoSVGBot extends TeleBot {
             if (response) {
                 console.error(response?.description);
                 const timeout = response?.parameters?.retry_after || 10;
+                if (timeout > 60) {
+                    const text = `⏳ ${response?.description}`;
+                    const chat_id = parseInt(TELEGRAM_CHAT_ID);
+                    await super.request("/sendMessage", {text, chat_id}).catch(console.error);
+                }
                 await scheduler.wait((timeout * 1000) + 1000);
             }
             response = await super.request(...args).catch(e => e);

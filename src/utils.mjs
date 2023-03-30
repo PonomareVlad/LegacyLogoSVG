@@ -189,7 +189,7 @@ export const updateFiles = async files => {
         repo: VERCEL_GIT_REPO_SLUG,
         owner: VERCEL_GIT_REPO_OWNER,
     }
-    const {sha} = await octokit.rest.repos.getContent(options).catch(() => ({}));
+    const {data: {sha} = {}} = await octokit.rest.repos.getContent(options).catch(() => ({}));
     const content = Buffer.from(JSON.stringify(files, null, 2), "utf8").toString("base64");
     const updateOptions = {...options, sha, content, message: path};
     const {status} = await octokit.rest.repos.createOrUpdateFileContents(updateOptions);
