@@ -68,3 +68,5 @@ for (let [key, logos = []] of Object.entries(sets)) {
     }
 
 }
+
+await Utils.updateFiles(files).catch(Utils.error);

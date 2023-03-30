@@ -1,6 +1,7 @@
 import config from "../config.json" assert {type: "json"};
 import {serializeError} from "serialize-error";
 import bot, {LogoSVGBot} from "./bot.mjs";
+import {Octokit} from "octokit";
 import {md} from "telegram-md";
 import {JSDOM} from "jsdom";
 
@@ -12,8 +13,11 @@ const {
 } = config || {};
 
 const {
+    GITHUB_TOKEN,
     TELEGRAM_USER_ID,
     TELEGRAM_SET_SUFFIX,
+    VERCEL_GIT_REPO_SLUG,
+    VERCEL_GIT_REPO_OWNER,
     TELEGRAM_SET_APPENDIX,
     TELEGRAM_STICKER_EMOJI = "🖼️",
     TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
@@ -169,6 +173,25 @@ export const getSet = async name => {
     return stickers.map(({file_id} = {}) => file_id);
 }
 
+export const updateFiles = async files => {
+    const path = "files.json";
+    const octokit = new Octokit({auth: GITHUB_TOKEN});
+    const options = {
+        path,
+        branch: "beta",
+        repo: VERCEL_GIT_REPO_SLUG,
+        owner: VERCEL_GIT_REPO_OWNER,
+    }
+    const {sha} = await octokit.rest.repos.getContent(options);
+    const content = Buffer.from(JSON.stringify(files, null, 2), "utf8").toString("base64");
+    const updateOptions = {...options, sha, content, message: path};
+    const {status} = await octokit.rest.repos.createOrUpdateFileContents(updateOptions);
+    const message = ["🗄️", Object.keys(files).length, "—", JSON.stringify(status, null, 2)].join(" ");
+    await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return status;
+}
+
 export default {
     countByGroupSorter,
     countByGroupMapper,
@@ -180,6 +203,7 @@ export default {
     uploadSticker,
     getUniqItems,
     logosSorter,
+    updateFiles,
     getSetTitle,
     getSetName,
     capitalize,
