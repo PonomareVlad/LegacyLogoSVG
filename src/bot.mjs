@@ -28,10 +28,11 @@ export class LogoSVGBot extends TeleBot {
             if (response) {
                 console.error(response?.description);
                 const timeout = response?.parameters?.retry_after || 10;
-                if (timeout > 60) {
+                if (timeout > 1000) {
                     const text = `⏳ ${response?.description}`;
                     const chat_id = parseInt(TELEGRAM_CHAT_ID);
                     await super.request("/sendMessage", {text, chat_id}).catch(console.error);
+                    process.exit(1);
                 }
                 await scheduler.wait((timeout * 1000) + 1000);
             }
