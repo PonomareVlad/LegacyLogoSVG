@@ -1,100 +1,22 @@
+import files from "../files.json" assert {type: "json"};
 import sets from "../sets.json" assert {type: "json"};
-import {serializeError} from "serialize-error";
-import bot, {LogoSVGBot} from "./bot.mjs";
 import Utils from "./utils.mjs";
-import {md} from "telegram-md";
-
-const {
-    TELEGRAM_USER_ID,
-    TELEGRAM_SET_SUFFIX,
-    TELEGRAM_SET_APPENDIX,
-    TELEGRAM_STICKER_EMOJI = "🖼️",
-    TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
-} = process.env;
-
-const tgs = "./tgs/";
-const chat_id = parseInt(TELEGRAM_CHAT_ID);
-const emojiList = [TELEGRAM_STICKER_EMOJI];
+import bot from "./bot.mjs";
 
 await bot.init();
-
-const error = async (error, ...args) => {
-    const json = JSON.stringify(serializeError(error), null, 2);
-    const context = args.length ? ["⚠️", ...args].join(" ") : "⚠️";
-    const message = md`${context}\r\n${md.codeBlock(json, "json")}`;
-    await bot.sendMessage(chat_id, md.build(message), {parseMode: "MarkdownV2"});
-    console.error(error);
-}
-
-const setInfo = async (title, logos = []) => {
-    const stickers = logos.flatMap(({stickers = []}) => stickers);
-    const message = ["🗂", title, "—", stickers.length].join(" ");
-    await bot.sendMessage(chat_id, message);
-    console.log(message);
-}
-
-const sendLink = async name => {
-    const setName = LogoSVGBot.getSetName(name, bot.username);
-    const message = ["✨", `t.me/addemoji/${setName}`].join(" ");
-    await bot.sendMessage(chat_id, message);
-    console.log(message);
-}
-
-const deleteSet = async name => {
-    const status = await bot.deleteStickerSet({name}).catch(e => e);
-    const message = ["🗑️", name, "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(chat_id, message);
-    console.log(message);
-    return status;
-}
-
-const uploadSticker = async file => {
-    const path = tgs + file;
-    const {file_id} = await bot.uploadStickerFile({path});
-    const message = ["💾", path, "—", !!file_id].join(" ");
-    // await bot.sendMessage(chat_id, message);
-    console.log(message);
-    return file_id;
-}
-
-const addSticker = async ({name, sticker, keywords, emoji_list = emojiList} = {}) => {
-    const status = await bot.addStickerToSet({name, sticker: {sticker, emoji_list, keywords}});
-    const message = ["🖼", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(chat_id, message);
-    console.log(message);
-    return status;
-}
-
-const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList} = {}) => {
-    const stickers = [{sticker, emoji_list, keywords}];
-    const status = await bot.createNewStickerSet({name, title, stickers});
-    const message = ["🎨", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
-    // await bot.sendMessage(chat_id, message);
-    console.log(message);
-    return status;
-}
-
-const links = Object.keys(sets).map(key => {
-    const id = Utils.capitalize(key);
-    const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
-    const setName = LogoSVGBot.getSetName(name, bot.username);
-    return `t.me/addemoji/${setName}`;
-});
-
-const message = ["📦 Uploading sets:", ...links].join("\r\n");
-
-await bot.sendMessage(chat_id, message);
+await Utils.sendLinks(sets);
 
 for (let [key, logos = []] of Object.entries(sets)) {
     try {
 
         const id = Utils.capitalize(key);
-        const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
-        const title = [id, TELEGRAM_SET_APPENDIX].filter(Boolean).join(" ");
-        await setInfo(title, logos);
-        await deleteSet(name);
+        const name = Utils.getSetName(id);
+        const title = Utils.getSetTitle(id);
+        await Utils.setInfo(title, logos);
+        await Utils.deleteSet(name);
 
-        let set;
+        let position = 0;
+        let set = await Utils.getSet(name).catch(() => undefined);
 
         for (let logo of logos) {
             try {
@@ -112,30 +34,37 @@ for (let [key, logos = []] of Object.entries(sets)) {
                     ...tags,
                     ...categories,
                     shortname,
-                ].reduce(Utils.reduceKeywords, []);
+                ].reduce(Utils.reduceKeywords, []).splice(0, 20);
 
                 for (let file of stickers) {
                     try {
 
-                        const sticker = await uploadSticker(file);
+                        const sticker = files[file] ??= await Utils.uploadSticker(file);
                         const data = {name, title, sticker, keywords};
-                        if (!set) set = await createSet(data);
-                        await addSticker(data);
+
+                        if (!set) {
+                            await Utils.createSet(data);
+                            set = await Utils.getSet(name);
+                        }
+
+                        if (!set.includes(sticker)) await Utils.addSticker(data);
+
+                        await Utils.setStickerPosition(sticker, position++);
 
                     } catch (e) {
-                        await error(e, "File:", file);
+                        await Utils.error(e, "File:", file);
                     }
                 }
 
             } catch (e) {
-                await error(e, "Logo:", logo.shortname);
+                await Utils.error(e, "Logo:", logo.shortname);
             }
         }
 
-        await sendLink(name);
+        await Utils.sendLink(name);
 
     } catch (e) {
-        await error(e, "Set:", key);
+        await Utils.error(e, "Set:", key);
     }
 
 }

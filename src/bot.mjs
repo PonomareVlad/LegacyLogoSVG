@@ -75,6 +75,19 @@ export class LogoSVGBot extends TeleBot {
         return result;
     }
 
+    async setStickerPositionInSet(data = {}) {
+        const {
+            sticker,
+            position,
+        } = data || {};
+        const form = {
+            sticker,
+            position,
+        };
+        const {result} = await this.request("/setStickerPositionInSet", form);
+        return result;
+    }
+
     async uploadStickerFile(data = {}) {
         const {
             file,
@@ -109,6 +122,19 @@ export class LogoSVGBot extends TeleBot {
             name: this.constructor.getSetName(name || title, username),
         };
         const {result} = await this.request("/deleteStickerSet", form);
+        return result;
+    }
+
+    async getStickerSet(data = {}) {
+        const {
+            name,
+            title,
+            username = this.username,
+        } = data || {};
+        const form = {
+            name: this.constructor.getSetName(name || title, username),
+        };
+        const {result} = await this.request("/getStickerSet", form);
         return result;
     }
 

@@ -1,4 +1,7 @@
 import config from "../config.json" assert {type: "json"};
+import {serializeError} from "serialize-error";
+import bot, {LogoSVGBot} from "./bot.mjs";
+import {md} from "telegram-md";
 import {JSDOM} from "jsdom";
 
 const {
@@ -6,26 +9,27 @@ const {
     selector,
     priority = [],
     variants = [],
-} = config;
+} = config || {};
 
-export async function fetchLogos(targetUrl = url, targetSelector = selector) {
-    const {window: {document} = {}} = await JSDOM.fromURL(targetUrl);
-    const {innerHTML} = document.querySelector(targetSelector);
-    const {
-        props: {
-            pageProps: {
-                logos = [],
-            } = {}
-        } = {}
-    } = JSON.parse(innerHTML);
-    return logos;
-}
+const {
+    TELEGRAM_USER_ID,
+    TELEGRAM_SET_SUFFIX,
+    TELEGRAM_SET_APPENDIX,
+    TELEGRAM_STICKER_EMOJI = "🖼️",
+    TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
+} = process.env;
+
+const tgs = "./tgs/";
+const chat_id = parseInt(TELEGRAM_CHAT_ID);
+const emojiList = [TELEGRAM_STICKER_EMOJI];
 
 export const getUniqItems = items => [...new Set(items)];
 export const getJoined = items => Object.values(items).flat();
 export const countByGroupSorter = ([, a] = [], [, b] = []) => b - a;
 export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 export const prioritySorter = (a, b) => priority.indexOf(a) - priority.indexOf(b);
+export const getSetName = id => [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
+export const getSetTitle = id => [id, TELEGRAM_SET_APPENDIX].filter(Boolean).join(" ");
 export const variantsFilter = file => variants.some(variant => file.endsWith(variant));
 export const logosSorter = ({shortname: a} = {}, {shortname: b} = {}) => a.localeCompare(b);
 export const joinMapper = ([parent, children = []]) => children.map(child => [child, parent]);
@@ -55,6 +59,19 @@ export const reduceKeywords = (items, item) => {
     return (items.join("").length + item.length) <= 64 ? [...items, item] : items;
 }
 
+export const fetchLogos = async (targetUrl = url, targetSelector = selector) => {
+    const {window: {document} = {}} = await JSDOM.fromURL(targetUrl);
+    const {innerHTML} = document.querySelector(targetSelector);
+    const {
+        props: {
+            pageProps: {
+                logos = [],
+            } = {}
+        } = {}
+    } = JSON.parse(innerHTML);
+    return logos;
+}
+
 export const getGroup = (key, groups = new Map()) => {
     if (groups.has(key)) return groups.get(key);
     const group = new Set();
@@ -62,19 +79,123 @@ export const getGroup = (key, groups = new Map()) => {
     return group;
 }
 
+export const addSticker = async ({name, sticker, keywords, emoji_list = emojiList} = {}) => {
+    const status = await bot.addStickerToSet({name, sticker: {sticker, emoji_list, keywords}});
+    const message = ["🖼", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return status;
+}
+
+export const setStickerPosition = async (sticker, position = 0) => {
+    const status = await bot.setStickerPositionInSet({sticker, position});
+    const message = ["📌", position, "—", JSON.stringify(status, null, 2)].join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return status;
+}
+
+export const createSet = async ({name, title, sticker, keywords, emoji_list = emojiList} = {}) => {
+    const stickers = [{sticker, emoji_list, keywords}];
+    const status = await bot.createNewStickerSet({name, title, stickers});
+    const message = ["🎨", keywords.at(0), "—", JSON.stringify(status, null, 2)].join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return status;
+}
+
+export const deleteSet = async name => {
+    const status = await bot.deleteStickerSet({name}).catch(e => e);
+    const message = ["🗑️", name, "—", JSON.stringify(status, null, 2)].join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return status;
+}
+
+export const uploadSticker = async file => {
+    const path = tgs + file;
+    const {file_id} = await bot.uploadStickerFile({path});
+    const message = ["💾", path, "—", !!file_id].join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+    return file_id;
+}
+
+export const setInfo = async (title, logos = []) => {
+    const stickers = logos.flatMap(({stickers = []}) => stickers);
+    const message = ["🗂", title, "—", stickers.length].join(" ");
+    await bot.sendMessage(chat_id, message);
+    console.log(message);
+}
+
+export const sendLink = async name => {
+    const setName = LogoSVGBot.getSetName(name, bot.username);
+    const message = ["✨", `t.me/addemoji/${setName}`].join(" ");
+    await bot.sendMessage(chat_id, message);
+    console.log(message);
+}
+
+export const error = async (error, ...args) => {
+    const json = JSON.stringify(serializeError(error), null, 2);
+    const context = args.length ? ["⚠️", ...args].join(" ") : "⚠️";
+    const message = md`${context}\r\n${md.codeBlock(json, "json")}`;
+    await bot.sendMessage(chat_id, md.build(message), {parseMode: "MarkdownV2"});
+    console.error(error);
+}
+
+export const log = async (...args) => {
+    const message = args.join(" ");
+    // await bot.sendMessage(chat_id, message);
+    console.log(message);
+}
+
+export const getLinks = sets => {
+    return Object.keys(sets).map(key => {
+        const id = capitalize(key);
+        const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
+        const setName = LogoSVGBot.getSetName(name, bot.username);
+        return `t.me/addemoji/${setName}`;
+    });
+}
+
+export const sendLinks = async sets => {
+    const links = getLinks(sets);
+    const message = ["📦 Uploading sets:", ...links.join("\r\n\r\n")].join("\r\n");
+    return bot.sendMessage(chat_id, message);
+}
+
+export const getSet = async name => {
+    const {stickers = []} = await bot.getStickerSet({name});
+    return stickers.map(({file_id} = {}) => file_id);
+}
+
 export default {
     countByGroupSorter,
     countByGroupMapper,
+    setStickerPosition,
     reduceKeywords,
     variantsFilter,
     prioritySorter,
     addByPriority,
+    uploadSticker,
     getUniqItems,
     logosSorter,
+    getSetTitle,
+    getSetName,
     capitalize,
     mergeGroup,
     fetchLogos,
+    addSticker,
+    sendLinks,
     getJoined,
-    getJoins,
+    createSet,
+    deleteSet,
     getGroup,
+    getJoins,
+    getLinks,
+    sendLink,
+    setInfo,
+    getSet,
+    error,
+    log,
 }
