@@ -306,6 +306,7 @@
     "business": [
       "box",
       "taskade",
+      "airtable",
       "geekbot",
       "trello",
       "upwork",
@@ -515,6 +516,7 @@
     "php",
     "ember",
     "emacs",
+    "ethereum",
     "jetbrains",
     "copyleft"
   ],
