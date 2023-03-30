@@ -6,7 +6,9 @@ const {
     tags = {},
     logos = {},
     title = {},
+    skipped = [],
     excluded = [],
+    multiple = [],
     categories = {},
     collects = "other",
 } = config;
@@ -34,7 +36,9 @@ originalLogos.map(logo => {
         categories = [],
     } = logo || {};
 
-    const targetFiles = files.length > 1 ? files.filter(Utils.variantsFilter) : files;
+    if (skipped.includes(shortname)) return;
+
+    const targetFiles = !multiple.includes(shortname) && files.length > 1 ? files.filter(Utils.variantsFilter) : files;
 
     logo.stickers = targetFiles.map(file => file.replace('.svg', '.tgs'));
 

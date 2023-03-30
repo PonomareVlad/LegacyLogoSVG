@@ -7,16 +7,16 @@
   ],
   "categories": {
     "business": [
+      "teams"
+    ],
+    "cms": [
       "bloggers",
       "publishers"
     ],
-    "social": [
-      "teams",
+    "geeks": [
+      "hackers",
       "sharing",
       "mobile app"
-    ],
-    "geeks": [
-      "hackers"
     ]
   },
   "tags": {
@@ -66,8 +66,12 @@
       "aws"
     ],
     "business": [
-      "cms",
+      "team collaboration",
       "wiki",
+      "collaborative",
+      "task manager",
+      "forms",
+      "billing",
       "control panel",
       "domain registration",
       "cloud communication",
@@ -76,7 +80,6 @@
       "data visualization",
       "security",
       "AaaS",
-      "admin panel",
       "teams",
       "analytics",
       "agile",
@@ -87,33 +90,35 @@
       "two-factor authentication",
       "authentication",
       "video monitoring",
-      "website builder",
       "time tracking",
       "coding metrics",
       "project manager",
       "issue tracker",
       "a/b testing",
       "feature flag",
-      "headless cms",
-      "visual builder",
       "transactional email"
     ],
     "developers": [
-      "code search",
       "end-to-end testing",
       "cross browser testing",
       "mobile test automation",
       "test management",
       "developers",
-      "mercurial",
       "python",
       "java",
       "ruby",
-      "git",
       "c++",
       "c"
     ],
     "geeks": [
+      "chat",
+      "social",
+      "photos",
+      "webkit",
+      "group chat",
+      "social network",
+      "standardization",
+      "video conference",
       "operational system",
       "developer profile",
       "developer rank",
@@ -136,13 +141,18 @@
     ],
     "ide": [
       "cli",
+      "pair programming",
       "ide",
       "IDE",
+      "code search",
+      "mercurial",
       "jetbrains",
       "code style",
       "code editor",
       "code review",
-      "version control"
+      "version control",
+      "code manager",
+      "git"
     ],
     "jetbrains": [
       "jetbrains"
@@ -158,10 +168,9 @@
     ],
     "web": [
       "web",
+      "vue",
       "lambda",
-      "cross browser testing",
-      "static site",
-      "jamstack",
+      "storybook",
       "angular",
       "css",
       "w3c",
@@ -183,22 +192,27 @@
       "service worker",
       "web performance",
       "front-end framework",
-      "static site generator",
       "server side rendering"
     ],
-    "social": [
-      "chat",
-      "social",
-      "photos",
-      "group chat",
-      "social network",
-      "video conference",
-      "team collaboration"
+    "cms": [
+      "cms",
+      "wordpress",
+      "no code",
+      "jamstack",
+      "admin panel",
+      "static site",
+      "headless cms",
+      "visual builder",
+      "website builder",
+      "static site generator"
     ]
   },
   "logos": {
     "react": [
       "react",
+      "hermes",
+      "react-spring",
+      "react-styleguidist",
       "next.js",
       "preact",
       "react native",
@@ -283,8 +297,25 @@
       "aws-codecommit",
       "aws-codebuild"
     ],
+    "DevOps": [
+      "nodemon"
+    ],
+    "designers": [
+      "blender"
+    ],
     "business": [
+      "box",
+      "taskade",
+      "geekbot",
+      "trello",
+      "upwork",
+      "notion",
+      "typeform",
+      "ethnio",
+      "maildeveloper",
+      "formkeep",
       "splunk",
+      "chargebee",
       "speedcurve",
       "twilio",
       "appdynamics",
@@ -292,12 +323,23 @@
     ],
     "developers": [
       "swift",
+      "jruby",
       "pyscript",
       "jhipster",
       "realm"
     ],
     "geeks": [
+      "v8",
+      "maps-me",
+      "webkit",
       "linux",
+      "sitepoint",
+      "udemy",
+      "smashingmagazine",
+      "coursera",
+      "telegram",
+      "khan_academy",
+      "flickr",
       "shields",
       "awesome",
       "ethereum",
@@ -305,7 +347,8 @@
       "cloudacademy",
       "openlayers",
       "opensource",
-      "stackoverflow"
+      "stackoverflow",
+      "treehouse"
     ],
     "google": [
       "go",
@@ -316,6 +359,7 @@
       "recaptcha",
       "looker",
       "lit",
+      "puppeteer",
       "chrome-web-store",
       "dart",
       "fuchsia",
@@ -365,6 +409,28 @@
       "youtrack"
     ],
     "web": [
+      "ink",
+      "tauri",
+      "uikit",
+      "percy",
+      "turret",
+      "pixijs",
+      "reapp",
+      "semantic-ui",
+      "milligram",
+      "materializecss",
+      "foundation",
+      "evergreen",
+      "storybook",
+      "chromatic",
+      "element",
+      "grommet",
+      "headlessui",
+      "framework7",
+      "bootstrap",
+      "jest",
+      "flat-ui",
+      "font-awesome",
       "oauth",
       "serverless",
       "koa",
@@ -391,9 +457,22 @@
       "open-graph",
       "javascript"
     ],
-    "social": [
-      "telegram",
-      "flickr"
+    "cms": [
+      "bubble",
+      "jamstack",
+      "wpengine",
+      "datocms",
+      "stackbit",
+      "strapi"
+    ],
+    "ide": [
+      "swimm",
+      "skaffolder",
+      "stately",
+      "stepsize",
+      "gitkraken",
+      "github-copilot",
+      "emacs"
     ]
   },
   "priority": [
@@ -401,13 +480,12 @@
     "adobe",
     "google",
     "jetbrains",
-    "social",
     "designers",
-    "business",
     "ide",
     "geeks",
-    "DevOps",
     "react",
+    "business",
+    "DevOps",
     "web",
     "developers"
   ],
@@ -418,6 +496,7 @@
   },
   "variants": [
     "-icon-round.svg",
+    "_official.svg",
     "-ignition.svg",
     "-turbofan.svg",
     "-vertical.svg",
@@ -429,5 +508,20 @@
     "-pirate.svg",
     "-color.svg",
     "-icon.svg"
+  ],
+  "multiple": [
+    "v8",
+    "elm",
+    "php",
+    "ember",
+    "emacs",
+    "jetbrains",
+    "copyleft"
+  ],
+  "skipped": [
+    "composer",
+    "waffle",
+    "lerna",
+    "hugo"
   ]
 }
