@@ -11,6 +11,7 @@
     "publish": "node src/publish.mjs",
     "optimize": "node src/optimize.mjs",
     "postinstall": ".scripts/install.sh",
+    "group-with-env": "node -r dotenv/config src/group.mjs",
     "publish-with-env": "node -r dotenv/config src/publish.mjs",
     "build": "npm run postinstall && npm run group && npm run optimize && npm run convert && npm run publish"
   },
