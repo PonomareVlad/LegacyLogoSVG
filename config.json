@@ -141,6 +141,7 @@
     ],
     "ide": [
       "cli",
+      "code playground",
       "pair programming",
       "ide",
       "IDE",
@@ -449,7 +450,6 @@
       "electron",
       "nwjs",
       "browsersync",
-      "jsbin",
       "pwa",
       "json",
       "xstate",
@@ -521,6 +521,7 @@
     "go",
     "elm",
     "php",
+    "css-3",
     "ember",
     "emacs",
     "ethereum",
