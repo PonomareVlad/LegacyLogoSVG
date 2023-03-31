@@ -61,6 +61,7 @@ for (let [key, logos = []] of Object.entries(sets)) {
         }
 
         await Utils.sendLink(name);
+        await Utils.updateFiles(files);
 
     } catch (e) {
         await Utils.error(e, "Set:", key);

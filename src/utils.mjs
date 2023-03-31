@@ -161,11 +161,12 @@ export const log = async (...args) => {
 }
 
 export const getLinks = sets => {
-    return Object.keys(sets).map(key => {
+    return Object.entries(sets).map(([key, logos = []] = []) => {
         const id = capitalize(key);
         const name = [id, TELEGRAM_SET_SUFFIX].filter(Boolean).join("_");
         const setName = LogoSVGBot.getSetName(name, bot.username);
-        return `t.me/addemoji/${setName}`;
+        const stickers = logos.flatMap(({stickers = []}) => stickers);
+        return `t.me/addemoji/${setName} (${stickers.length})`;
     });
 }
 
@@ -189,14 +190,15 @@ export const updateFiles = async files => {
         repo: VERCEL_GIT_REPO_SLUG,
         owner: VERCEL_GIT_REPO_OWNER,
     }
+    const sorter = ([a] = [], [b] = []) => a.localeCompare(b);
+    const sortedFiles = Object.fromEntries(Object.entries(files).sort(sorter));
     const {data: {sha} = {}} = await octokit.rest.repos.getContent(options).catch(() => ({}));
-    const content = Buffer.from(JSON.stringify(files, null, 2), "utf8").toString("base64");
+    const content = Buffer.from(JSON.stringify(sortedFiles, null, 2), "utf8").toString("base64");
     const updateOptions = {...options, sha, content, message: path};
-    const {status} = await octokit.rest.repos.createOrUpdateFileContents(updateOptions);
-    const message = ["🗄️", Object.keys(files).length, "—", JSON.stringify(status, null, 2)].join(" ");
+    const {data: {content: {name} = {}} = {}} = await octokit.rest.repos.createOrUpdateFileContents(updateOptions);
+    const message = ["🗄️", name, "—", Object.keys(sortedFiles).length].join(" ");
     await bot.sendMessage(chat_id, message);
     console.log(message);
-    return status;
 }
 
 export default {
