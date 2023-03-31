@@ -494,6 +494,9 @@
     "ide": "IDE",
     "aws": "AWS",
     "cms": "CMS",
+    "geeks": "Geek",
+    "developers": "Dev",
+    "designers": "Design",
     "jetbrains": "JetBrains"
   },
   "variants": [
