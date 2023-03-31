@@ -3,6 +3,8 @@ import sets from "../sets.json" assert {type: "json"};
 import Utils from "./utils.mjs";
 import bot from "./bot.mjs";
 
+const {SETS_NEEDS_REPAINTING} = process.env;
+
 await bot.init({exit: () => Utils.updateFiles(files)});
 await Utils.sendLinks(sets);
 
@@ -25,6 +27,7 @@ for (let [key, logos = []] of Object.entries(sets)) {
                     shortname,
                     name: logoName,
                     tags = [],
+                    repaint = [],
                     stickers = [],
                     categories = [],
                 } = logo || {};
@@ -36,7 +39,9 @@ for (let [key, logos = []] of Object.entries(sets)) {
                     shortname,
                 ].reduce(Utils.reduceKeywords, []).splice(0, 20);
 
-                for (let file of stickers) {
+                const targetFiles = SETS_NEEDS_REPAINTING ? repaint : stickers;
+
+                for (let file of targetFiles) {
                     try {
 
                         if (!Utils.checkFile(file, files)) {
