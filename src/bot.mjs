@@ -17,7 +17,8 @@ export class LogoSVGBot extends TeleBot {
 
     static getSetName = (name = "", username = "") => `${name.replaceAll(" ", "_")}_by_${username}`;
 
-    async init() {
+    async init(options = {}) {
+        this.options = options || {};
         const {username} = await this.getMe();
         this.username = username;
     }
@@ -32,6 +33,7 @@ export class LogoSVGBot extends TeleBot {
                     const text = `⏳ ${response?.description}`;
                     const chat_id = parseInt(TELEGRAM_CHAT_ID);
                     await super.request("/sendMessage", {text, chat_id}).catch(console.error);
+                    if (typeof this?.options?.exit === "function") await this.options.exit();
                     process.exit(1);
                 }
                 await scheduler.wait((timeout * 1000) + 1000);

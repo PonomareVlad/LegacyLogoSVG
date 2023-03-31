@@ -3,7 +3,7 @@ import sets from "../sets.json" assert {type: "json"};
 import Utils from "./utils.mjs";
 import bot from "./bot.mjs";
 
-await bot.init();
+await bot.init({exit: () => Utils.updateFiles(files)});
 await Utils.sendLinks(sets);
 
 for (let [key, logos = []] of Object.entries(sets)) {
