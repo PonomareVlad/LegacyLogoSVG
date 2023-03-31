@@ -1,3 +1,4 @@
+import sets from "../sets.json" assert {type: "json"};
 import {scheduler} from "node:timers/promises";
 import TeleBot from "telebot";
 import fs from "fs";
@@ -12,10 +13,36 @@ export class LogoSVGBot extends TeleBot {
 
     constructor(...args) {
         super(...args);
-        this.on("text", msg => msg.reply.text(msg.text));
+        this.on("text", this.text.bind(this));
+        this.mod("message", this.constructor.message.bind(this));
+    }
+
+    static message(data) {
+        if (data?.message?.text?.startsWith("/")) {
+            const [name, ...words] = data.message.text.split(" ");
+            Object.assign(data.message, {
+                command: name.replace("/", ""), text: words.join(" "), isCommand: true
+            });
+        }
+        return data;
     }
 
     static getSetName = (name = "", username = "") => `${name.replaceAll(" ", "_")}_by_${username}`;
+
+    async text({command, text, reply = {}} = {}) {
+        if (command) return reply.text("Please send name of logo for search", {asReply: true});
+        const query = text.toLowerCase();
+        const results = Object.entries(sets).filter(([, logos = []]) => {
+            return logos.some((logo = {}) => {
+                const {name, shortname, url, tags = [], categories = []} = logo;
+                const keywords = [name, shortname, url, ...tags, ...categories].filter(Boolean);
+                return keywords.map(keyword => keyword.toLowerCase()).some(keyword => keyword.includes(query));
+            });
+        }).map(([set] = []) => this.constructor.getSetName(set, this.username));
+        if (!results.length) return reply.text(`No results, try send the correct brand name`, {asReply: true});
+        await reply.text(`Found in ${results.length} set(s):`, {asReply: true});
+        return Promise.all(results.map(setName => reply.text(`t.me/addemoji/${setName}`))).catch(e => e);
+    }
 
     async init(options = {}) {
         this.options = options || {};
