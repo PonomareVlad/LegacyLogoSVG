@@ -3,12 +3,15 @@ import sets from "../sets.json" assert {type: "json"};
 import Utils from "./utils.mjs";
 import bot from "./bot.mjs";
 
-const {SETS_NEEDS_REPAINTING} = process.env;
+const {SKIP_SETS_PUBLISHING, SETS_NEEDS_REPAINTING} = process.env;
+
+if (SKIP_SETS_PUBLISHING) process.exit(0);
 
 await bot.init({exit: () => Utils.updateFiles(files)});
 await Utils.sendLinks(sets);
 
 for (let [key, logos = []] of Object.entries(sets)) {
+
     try {
 
         const id = Utils.capitalize(key);
