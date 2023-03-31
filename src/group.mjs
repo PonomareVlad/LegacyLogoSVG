@@ -44,7 +44,7 @@ originalLogos.map(logo => {
     const targetFiles = !multiple.includes(shortname) && files.length > 1 ? files.filter(Utils.variantsFilter) : files;
 
     logo.stickers = targetFiles.map(file => file.replace('.svg', '.tgs'));
-    logo.repaint = logo.stickers.filter(file => repainting.includes(file));
+    logo.repaint = logo.stickers.filter(file => !repainting.includes(file));
 
     if (joinedLogos.includes(shortname)) {
         return Utils.getGroup(logosJoin[shortname], groups).add(logo);
