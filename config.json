@@ -493,6 +493,7 @@
   "title": {
     "ide": "IDE",
     "aws": "AWS",
+    "cms": "CMS",
     "jetbrains": "JetBrains"
   },
   "variants": [
