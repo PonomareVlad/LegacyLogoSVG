@@ -1,6 +1,4 @@
 /node_modules/
-/groups.json
-/sets.json
 /.vercel
 /.env
 /tgs/

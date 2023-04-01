@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**": {
-      "includeFiles": "node_modules/telebot/plugins/**"
+      "includeFiles": "sets.json"
     }
   },
   "github": {

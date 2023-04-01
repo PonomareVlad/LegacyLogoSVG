@@ -1,6 +1,8 @@
-import sets from "../sets.json" assert {type: "json"};
 import {scheduler} from "node:timers/promises";
+import "telebot/plugins/regExpMessage.js";
+import "telebot/plugins/shortReply.js";
 import TeleBot from "telebot";
+import sets from "./sets.mjs";
 import fs from "fs";
 
 const {
