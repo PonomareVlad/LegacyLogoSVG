@@ -1,4 +1,5 @@
 import {scheduler} from "node:timers/promises";
+import {parseCommands} from "telebot-utils";
 import "telebot/plugins/regExpMessage.js";
 import "telebot/plugins/shortReply.js";
 import TeleBot from "telebot";
@@ -6,6 +7,7 @@ import sets from "./sets.mjs";
 import fs from "fs";
 
 const {
+    LOG_CHAT_ID,
     TELEGRAM_USER_ID,
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID = TELEGRAM_USER_ID,
@@ -15,24 +17,15 @@ export class LogoSVGBot extends TeleBot {
 
     constructor(...args) {
         super(...args);
+        this.mod("message", parseCommands);
         this.on("text", this.text.bind(this));
-        this.mod("message", this.constructor.message.bind(this));
-    }
-
-    static message(data) {
-        if (data?.message?.text?.startsWith("/")) {
-            const [name, ...words] = data.message.text.split(" ");
-            Object.assign(data.message, {
-                command: name.replace("/", ""), text: words.join(" "), isCommand: true
-            });
-        }
-        return data;
     }
 
     static getSetName = (name = "", username = "") => `${name.replaceAll(" ", "_")}_by_${username}`;
 
-    async text({command, text, reply = {}} = {}) {
+    async text({command, text, message_id, chat: {id}, reply = {}} = {}) {
         if (command) return reply.text("Please send name of logo for search", {asReply: true});
+        if (LOG_CHAT_ID) await this.forwardMessage(parseInt(LOG_CHAT_ID), id, message_id).catch(e => e);
         const query = text.toLowerCase();
         const results = Object.entries(sets).filter(([, logos = []]) => {
             return logos.some((logo = {}) => {
