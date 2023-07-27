@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "jsdom": "^21.1.1",
-    "octokit": "^2.0.14",
+    "octokit": "^3.1.0",
     "serialize-error": "^11.0.0",
     "svgo": "^3.0.2",
     "telebot": "^1.4.1",
